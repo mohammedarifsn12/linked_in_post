@@ -41,10 +41,9 @@ def main():
         post = generate_post(selected_length, selected_language, selected_tag)
         st.session_state.post_history.append(post)  # Save in session
         st.subheader("Generated Post:")
-        st.write(post)
-
-        # Copy to clipboard (for user convenience)
-        st.code(post, language="text")
+        
+        # Show only once
+        st.code(post, language="text")  # Display in code block
 
     # Display Post History
     if st.session_state.post_history:
