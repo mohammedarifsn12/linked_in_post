@@ -18,7 +18,15 @@ def main():
     # Center align content
     st.markdown(
         """
-        <div style="text-align: center;">
+        <style>
+            .centered {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+        </style>
+        <div class="centered">
             <h1>📢 AI-Powered LinkedIn Post Generator</h1>
             <p>🚀 Generate engaging and impactful LinkedIn posts effortlessly!<br>
             Customize your post based on topic, length, and language, then let AI do the rest.</p>
@@ -27,9 +35,9 @@ def main():
         unsafe_allow_html=True
     )
 
-    # Use a single centered container for input fields
+    # Use a centered container for input fields
     with st.container():
-        col1, col2 = st.columns([1, 1], gap="medium")
+        col1, col2 = st.columns([1, 1], gap="large")
         
         fs = FewShotPosts()
         tags = fs.get_tags()
@@ -42,8 +50,8 @@ def main():
             selected_language = st.selectbox("🌍 Language", options=language_options)
     
     # Centered Generate Button
-    st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
-    if st.button("🚀 Generate Post", use_container_width=True):
+    st.markdown("<div class='centered'>", unsafe_allow_html=True)
+    if st.button("🚀 Generate Post"):
         with st.spinner("Generating your post..."):
             time.sleep(1.5)  # Simulating processing time
             post = generate_post(selected_length, selected_language, selected_tag)
@@ -69,7 +77,7 @@ def main():
                 st.divider()
     
     # Centered Download Button
-    st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+    st.markdown("<div class='centered'>", unsafe_allow_html=True)
     if st.session_state.post_history:
         history_text = "\n\n".join(st.session_state.post_history)
         st.download_button(
