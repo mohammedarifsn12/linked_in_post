@@ -13,33 +13,37 @@ if "post_history" not in st.session_state:
 
 # Main app layout
 def main():
-    st.set_page_config(page_title="LinkedIn Post Generator", page_icon="📢", layout="wide")
-    st.title("📢 AI-Powered LinkedIn Post Generator")
-
+    st.set_page_config(page_title="LinkedIn Post Generator", page_icon="📢", layout="centered")
+    
+    # Center align content
     st.markdown(
         """
-        🚀 Generate engaging and impactful LinkedIn posts effortlessly!  
-        Customize your post based on topic, length, and language, then let AI do the rest.  
-        """
+        <div style="text-align: center;">
+            <h1>📢 AI-Powered LinkedIn Post Generator</h1>
+            <p>🚀 Generate engaging and impactful LinkedIn posts effortlessly!<br>
+            Customize your post based on topic, length, and language, then let AI do the rest.</p>
+        </div>
+        """,
+        unsafe_allow_html=True
     )
 
-    # Create three columns for dropdowns
-    col1, col2, col3 = st.columns(3)
+    # Use a single centered container for input fields
+    with st.container():
+        col1, col2 = st.columns([1, 1], gap="medium")
+        
+        fs = FewShotPosts()
+        tags = fs.get_tags()
 
-    fs = FewShotPosts()
-    tags = fs.get_tags()
+        with col1:
+            selected_tag = st.selectbox("🔖 Topic", options=tags)
+            selected_length = st.selectbox("📝 Length", options=length_options)
 
-    with col1:
-        selected_tag = st.selectbox("🔖 Topic", options=tags)
-
-    with col2:
-        selected_length = st.selectbox("📝 Length", options=length_options)
-
-    with col3:
-        selected_language = st.selectbox("🌍 Language", options=language_options)
-
-    # Generate Button
-    if st.button("🚀 Generate Post"):
+        with col2:
+            selected_language = st.selectbox("🌍 Language", options=language_options)
+    
+    # Centered Generate Button
+    st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+    if st.button("🚀 Generate Post", use_container_width=True):
         with st.spinner("Generating your post..."):
             time.sleep(1.5)  # Simulating processing time
             post = generate_post(selected_length, selected_language, selected_tag)
@@ -55,6 +59,7 @@ def main():
                 ```
                 """
             )
+    st.markdown("</div>", unsafe_allow_html=True)
     
     # Display Post History
     if st.session_state.post_history:
@@ -63,7 +68,8 @@ def main():
                 st.markdown(f"**{idx}.** {old_post}")
                 st.divider()
     
-    # Download Button
+    # Centered Download Button
+    st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
     if st.session_state.post_history:
         history_text = "\n\n".join(st.session_state.post_history)
         st.download_button(
@@ -72,6 +78,7 @@ def main():
             file_name="generated_posts.txt",
             mime="text/plain"
         )
+    st.markdown("</div>", unsafe_allow_html=True)
 
 # Run the app
 if __name__ == "__main__":
