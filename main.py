@@ -13,20 +13,12 @@ if "post_history" not in st.session_state:
 
 # Main app layout
 def main():
-    st.set_page_config(page_title="LinkedIn Post Generator", page_icon="📢", layout="centered")
-    
-    # Center align content
+    st.set_page_config(page_title="LinkedIn Post Generator", page_icon="📢", layout="wide")
+
+    # Center align content with slight width expansion
     st.markdown(
         """
-        <style>
-            .centered {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-            }
-        </style>
-        <div class="centered">
+        <div style="text-align: center; max-width: 800px; margin: auto;">
             <h1>📢 AI-Powered LinkedIn Post Generator</h1>
             <p>🚀 Generate engaging and impactful LinkedIn posts effortlessly!<br>
             Customize your post based on topic, length, and language, then let AI do the rest.</p>
@@ -35,10 +27,10 @@ def main():
         unsafe_allow_html=True
     )
 
-    # Use a centered container for input fields
+    # Use a single centered container for input fields
     with st.container():
-        col1, col2 = st.columns([1, 1], gap="large")
-        
+        col1, col2 = st.columns([1.5, 1], gap="large")  # Slightly wider
+
         fs = FewShotPosts()
         tags = fs.get_tags()
 
@@ -48,10 +40,10 @@ def main():
 
         with col2:
             selected_language = st.selectbox("🌍 Language", options=language_options)
-    
+
     # Centered Generate Button
-    st.markdown("<div class='centered'>", unsafe_allow_html=True)
-    if st.button("🚀 Generate Post"):
+    st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
+    if st.button("🚀 Generate Post", use_container_width=True):
         with st.spinner("Generating your post..."):
             time.sleep(1.5)  # Simulating processing time
             post = generate_post(selected_length, selected_language, selected_tag)
@@ -62,22 +54,23 @@ def main():
             st.markdown(
                 f"""
                 ✅ **Your AI-Generated LinkedIn Post:**
-                ```
+                ```text
                 {post}
                 ```
-                """
+                """,
+                unsafe_allow_html=True
             )
     st.markdown("</div>", unsafe_allow_html=True)
-    
+
     # Display Post History
     if st.session_state.post_history:
         with st.expander("📜 View Previous Posts", expanded=False):
             for idx, old_post in enumerate(reversed(st.session_state.post_history[-5:]), 1):
                 st.markdown(f"**{idx}.** {old_post}")
                 st.divider()
-    
+
     # Centered Download Button
-    st.markdown("<div class='centered'>", unsafe_allow_html=True)
+    st.markdown("<div style='text-align: center;'>", unsafe_allow_html=True)
     if st.session_state.post_history:
         history_text = "\n\n".join(st.session_state.post_history)
         st.download_button(
