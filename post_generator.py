@@ -3,7 +3,6 @@ from few_shot import FewShotPosts
 
 few_shot = FewShotPosts()
 
-
 def get_length_str(length):
     if length == "Short":
         return "1 to 5 lines"
@@ -12,12 +11,32 @@ def get_length_str(length):
     if length == "Long":
         return "11 to 15 lines"
 
+def generate_hashtags(post_content):
+    """Generate relevant hashtags using LLM based on the post content."""
+    prompt = f"""
+    Generate relevant LinkedIn hashtags based on the following post.
+    1. Return exactly 4-6 hashtags.
+    2. Use short and common hashtags related to the topic.
+    3. Output format should be a single line of space-separated hashtags.
+
+    Post:
+    {post_content}
+
+    Hashtags:
+    """
+    response = llm.invoke(prompt)
+    return response.content.strip()
 
 def generate_post(length, language, tag):
+    """Generate a LinkedIn post and append relevant hashtags."""
     prompt = get_prompt(length, language, tag)
     response = llm.invoke(prompt)
-    return response.content
+    post_content = response.content.strip()
+    
+    hashtags = generate_hashtags(post_content)
+    final_post = f"{post_content}\n\n{hashtags}"  # Append hashtags
 
+    return final_post
 
 def get_prompt(length, language, tag):
     length_str = get_length_str(length)
@@ -31,8 +50,7 @@ def get_prompt(length, language, tag):
     If Language is Hinglish then it means it is a mix of Hindi and English. 
     The script for the generated post should always be English.
     '''
-    # prompt = prompt.format(post_topic=tag, post_length=length_str, post_language=language)
-
+    
     examples = few_shot.get_filtered_posts(length, language, tag)
 
     if len(examples) > 0:
@@ -46,7 +64,6 @@ def get_prompt(length, language, tag):
             break
 
     return prompt
-
 
 if __name__ == "__main__":
     print(generate_post("Medium", "English", "Mental Health"))
