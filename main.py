@@ -1,6 +1,7 @@
 import streamlit as st
 from few_shot import FewShotPosts
 from post_generator import generate_post
+import time
 
 # Options for length and language
 length_options = ["Short", "Medium", "Long"]
@@ -12,12 +13,13 @@ if "post_history" not in st.session_state:
 
 # Main app layout
 def main():
-    st.title("📢 LinkedIn Post Generator")
+    st.set_page_config(page_title="LinkedIn Post Generator", page_icon="📢", layout="wide")
+    st.title("📢 AI-Powered LinkedIn Post Generator")
 
     st.markdown(
         """
-        Generate engaging LinkedIn posts using AI.  
-        Select your preferences and get a well-crafted post in seconds.  
+        🚀 Generate engaging and impactful LinkedIn posts effortlessly!  
+        Customize your post based on topic, length, and language, then let AI do the rest.  
         """
     )
 
@@ -38,20 +40,29 @@ def main():
 
     # Generate Button
     if st.button("🚀 Generate Post"):
-        post = generate_post(selected_length, selected_language, selected_tag)
-        st.session_state.post_history.append(post)  # Save in session
-        st.subheader("Generated Post:")
-        
-        # Show only once
-        st.code(post, language="text")  # Display in code block
-
+        with st.spinner("Generating your post..."):
+            time.sleep(1.5)  # Simulating processing time
+            post = generate_post(selected_length, selected_language, selected_tag)
+            st.session_state.post_history.append(post)  # Save in session
+            st.subheader("Generated Post:")
+            
+            # Display in a better UI format
+            st.markdown(
+                f"""
+                ✅ **Your AI-Generated LinkedIn Post:**
+                ```
+                {post}
+                ```
+                """
+            )
+    
     # Display Post History
     if st.session_state.post_history:
-        st.subheader("📜 Previous Posts")
-        for idx, old_post in enumerate(reversed(st.session_state.post_history[-5:]), 1):
-            st.markdown(f"**{idx}.** {old_post}")
-            st.divider()
-
+        with st.expander("📜 View Previous Posts", expanded=False):
+            for idx, old_post in enumerate(reversed(st.session_state.post_history[-5:]), 1):
+                st.markdown(f"**{idx}.** {old_post}")
+                st.divider()
+    
     # Download Button
     if st.session_state.post_history:
         history_text = "\n\n".join(st.session_state.post_history)
